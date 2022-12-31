@@ -578,7 +578,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
         return output;
     }
 
-    @Override
+    @Override 
     public Output visit(Back back, Site site) {
         Output output = new Output();
         if(!site.getPrevPageIndexes().isEmpty()) {
