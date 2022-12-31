@@ -1,5 +1,6 @@
 package classes.fileio;
 
+
 public final class ActionInput {
 
     private String type;
@@ -12,6 +13,8 @@ public final class ActionInput {
     private String objectType;
     private int count;
     private int rate;
+    private String subscribedGenre;
+    private MovieInput addedMovie;
 
     public ActionInput() {
     }
@@ -94,6 +97,22 @@ public final class ActionInput {
 
     public void setObjectType(final String objectType) {
         this.objectType = objectType;
+    }
+
+    public String getSubscribedGenre() {
+        return subscribedGenre;
+    }
+
+    public void setSubscribedGenre(String subscribedGenre) {
+        this.subscribedGenre = subscribedGenre;
+    }
+
+    public MovieInput getAddedMovie() {
+        return addedMovie;
+    }
+
+    public void setAddedMovie(MovieInput addedMovie) {
+        this.addedMovie = addedMovie;
     }
 
     @Override

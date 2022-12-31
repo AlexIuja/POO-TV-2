@@ -15,6 +15,7 @@ public final class User {
     private ArrayList<Movie> watchedMovies = new ArrayList<>();
     private ArrayList<Movie> likedMovies = new ArrayList<>();
     private ArrayList<Movie> ratedMovies = new ArrayList<>();
+    private ArrayList<Notification> notifications = new ArrayList<>();
     @JsonIgnore
     private ArrayList<Movie> allowedMovies = new ArrayList<>();
 
@@ -100,16 +101,25 @@ public final class User {
         this.allowedMovies = allowedMovies;
     }
 
+    public ArrayList<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(ArrayList<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     @Override
     public String toString() {
-        return "{"
-                + "credentials=" + credentials
-                + ", tokensCount=" + tokensCount
-                + ", numFreePremiumMovies=" + numFreePremiumMovies
-                + ", purchasedMovies=" + purchasedMovies
-                + ", watchedMovies=" + watchedMovies
-                + ", likedMovies=" + likedMovies
-                + ", ratedMovies=" + ratedMovies
-                + '}';
+        return "User{" +
+                "credentials=" + credentials +
+                ", tokensCount=" + tokensCount +
+                ", numFreePremiumMovies=" + numFreePremiumMovies +
+                ", purchasedMovies=" + purchasedMovies +
+                ", watchedMovies=" + watchedMovies +
+                ", likedMovies=" + likedMovies +
+                ", ratedMovies=" + ratedMovies +
+                ", notifications=" + notifications +
+                '}';
     }
 }

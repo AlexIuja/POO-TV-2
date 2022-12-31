@@ -6,6 +6,7 @@ import classes.packet.pages.SeeDetailsPage;
 import classes.packet.Site;
 import classes.packet.User;
 import classes.fileio.CredentialsInput;
+import classes.packet.pages.SitePage;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,6 +24,27 @@ public final class ActionVisitorImpl implements ActionVisitor {
     public void setMoviesAllowedInCountry(final ArrayList<Movie> moviesAllowedInCountry) {
         this.moviesAllowedInCountry = moviesAllowedInCountry;
     }
+    public int getPageIdx(SitePage page) {
+        if(page.getPageName().equals("homepage autentificat"))
+            return Site.HOMEPAGEAUT_ID;
+        else if(page.getPageName().equals("homepage neautentificat"))
+            return Site.HOMEPAGENEAUT_ID;
+        else if(page.getPageName().equals("login"))
+            return Site.LOGIN_ID;
+        else if(page.getPageName().equals("logout"))
+            return Site.LOGOUT_ID;
+        else if(page.getPageName().equals("movies"))
+            return Site.MOVIES_ID;
+        else if(page.getPageName().equals("register"))
+            return Site.REGISTER_ID;
+        else if(page.getPageName().equals("see details"))
+            return Site.SEEDETAILS_ID;
+        else if(page.getPageName().equals("upgrades"))
+            return Site.UPGRADES_ID;
+        return -1;
+    }
+
+
     @Override
     public Output visit(final ChangePage changePage, final Site site) {
         //implementarea functionalitatii change page
@@ -43,6 +65,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                 } else if (changePage.getPage().equals("logout")) {
                     // in cazul in care putem sa mergem pe pagina de logout,
                     // setam pagina curenta a site-ului drept HomepageNeautentificat
+                    site.getPrevPageIndexes().clear();
                     site.setCurrentPage(site.getAvailablePages().get(Site.HOMEPAGENEAUT_ID));
                     site.setCurrentUser(null);
                     return null;
@@ -51,6 +74,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     // setam pagina curenta a site-ului drept Movies
                     // si cream lista de filme pe care un utilizator le poate accesa
                     // (sunt excluse cele ale caror countriesBanned coincid cu tara utilizatorului)
+                    site.getPrevPageIndexes().add(getPageIdx(site.getCurrentPage()));
                     site.setCurrentPage(site.getAvailablePages().get(Site.MOVIES_ID));
                     output.setCurrentUser(site.getCurrentUser());
                     ArrayList<Movie> currMovies = new ArrayList<>();
@@ -68,6 +92,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                 } else if (changePage.getPage().equals("upgrades")) {
                     // in cazul in care putem sa mergem pe pagina de upgrades,
                     // setam pagina curenta a site-ului drept UpgradesPage
+                    site.getPrevPageIndexes().add(getPageIdx(site.getCurrentPage()));
                     site.setCurrentPage(site.getAvailablePages().get(Site.UPGRADES_ID));
                     return null;
                 } else if (changePage.getPage().equals("see details")) {
@@ -77,6 +102,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                             .getAllowedMovies().size(); j++) {
                         if (site.getCurrentUser().getAllowedMovies().get(j)
                                 .getName().equals(changePage.getMovie())) {
+                            site.getPrevPageIndexes().add(getPageIdx(site.getCurrentPage()));
                             site.setCurrentPage(site.getAvailablePages().get(Site.SEEDETAILS_ID));
                             // in cazul in care in input ni se specifica filmul pe pagina caruia
                             // trebuie sa intram, setam un camp special in SeeDetailsPage care
@@ -504,6 +530,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     i--;
                 }
             }
+            site.getCurrentUser().setAllowedMovies(movies);
             // setam outputul
             output.setCurrentMoviesList(movies);
             output.setError(null);
@@ -545,6 +572,32 @@ public final class ActionVisitorImpl implements ActionVisitor {
             }
         }
         // output in caz de eroare
+        output.setError("Error");
+        output.setCurrentUser(null);
+        output.getCurrentMoviesList().clear();
+        return output;
+    }
+
+    @Override
+    public Output visit(Back back, Site site) {
+        Output output = new Output();
+        if(!site.getPrevPageIndexes().isEmpty()) {
+            site.setCurrentPage(site.getAvailablePages().get(site.getPrevPageIndexes().get(site.getPrevPageIndexes().size())));
+            site.getPrevPageIndexes().remove(site.getPrevPageIndexes().size());
+            return null;
+        }
+        output.setError("Error");
+        output.setCurrentUser(null);
+        output.getCurrentMoviesList().clear();
+        return output;
+    }
+
+    @Override
+    public Output visit(Subscribe subscribe, Site site) {
+        Output output = new Output();
+        if(!site.getCurrentUser().getAllowedMovies().isEmpty()) {
+            return null;
+        }
         output.setError("Error");
         output.setCurrentUser(null);
         output.getCurrentMoviesList().clear();

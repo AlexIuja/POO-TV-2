@@ -1,19 +1,6 @@
 package classes.packet;
 
-import classes.packet.actions.Action;
-import classes.packet.actions.ActionVisitor;
-import classes.packet.actions.ActionVisitorImpl;
-import classes.packet.actions.BuyPrem;
-import classes.packet.actions.BuyTokens;
-import classes.packet.actions.ChangePage;
-import classes.packet.actions.Filter;
-import classes.packet.actions.Like;
-import classes.packet.actions.Login;
-import classes.packet.actions.Purchase;
-import classes.packet.actions.Rate;
-import classes.packet.actions.Register;
-import classes.packet.actions.Search;
-import classes.packet.actions.Watch;
+import classes.packet.actions.*;
 import classes.packet.pages.HomepageAutentificat;
 import classes.packet.pages.HomepageNeautentificat;
 import classes.packet.pages.LoginPage;
@@ -54,7 +41,7 @@ public final class Site {
     private ArrayList<SitePage> availablePages = new ArrayList<>();
     private SitePage currentPage;
     private User currentUser;
-
+    private ArrayList<Integer> prevPageIndexes = new ArrayList<>();
 
     public Site(final ArrayList<UserInput> usersInput,
                 final ArrayList<MovieInput> moviesInput,
@@ -68,6 +55,10 @@ public final class Site {
         for (ActionInput input : actionsInput) {
             if (input.getType().equals("change page")) {
                 actionsIn.add(new ChangePage(input, this));
+            } else if (input.getType().equals("back")) {
+                actionsIn.add(new Back(input, this));
+            } else if (input.getType().equals("subscribe")) {
+                actionsIn.add(new Subscribe(input, this));
             } else if (input.getFeature().equals("login")) {
                 actionsIn.add(new Login(input, this));
             } else if (input.getFeature().equals("register")) {
@@ -116,6 +107,7 @@ public final class Site {
                         availablePages.get(UPGRADES_ID), availablePages.get(LOGOUT_ID))));
         currentPage = availablePages.get(HOMEPAGENEAUT_ID);
     }
+
 
     /**
      *
@@ -183,6 +175,14 @@ public final class Site {
 
     public void setCurrentUser(final User currentUser) {
         this.currentUser = currentUser;
+    }
+
+    public ArrayList<Integer> getPrevPageIndexes() {
+        return prevPageIndexes;
+    }
+
+    public void setPrevPageIndexes(ArrayList<Integer> prevPageIndex) {
+        this.prevPageIndexes = prevPageIndex;
     }
 
     /**

@@ -94,4 +94,9 @@ public interface ActionVisitor {
      * @return
      */
     Output visit(Watch watch, Site site);
+
+
+
+    Output visit(Back back, Site site);
+    Output visit(Subscribe subscribe, Site site);
 }
