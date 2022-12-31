@@ -1,0 +1,18 @@
+Starting audit...
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:1: File does not end with a newline. [NewlineAtEndOfFile]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:1:8: Unused import - classes.fileio.Input. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:2:8: Unused import - classes.packet.Site. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:3:8: Unused import - com.fasterxml.jackson.databind.ObjectMapper. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:4:8: Unused import - com.fasterxml.jackson.databind.ObjectWriter. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:5:8: Unused import - com.fasterxml.jackson.databind.node.ArrayNode. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:7:8: Unused import - java.io.File. [UnusedImports]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:10:1: Utility classes should not have a public or default constructor. [HideUtilityClassConstructor]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:11:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Main.java:11:29: Parameter args should be final. [FinalParameters]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Test.java:1: File does not end with a newline. [NewlineAtEndOfFile]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Test.java:9:28: Using the '.*' form of import should be avoided - java.util.concurrent.*. [AvoidStarImport]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Test.java:158: Line is longer than 100 characters (found 108). [LineLength]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Test.java:206:65: Parameter testFileName should be final. [FinalParameters]
+[ERROR] D:\CA\POO\POO TV 2\.\src\Test.java:222: Line is longer than 100 characters (found 108). [LineLength]
+Audit done.
+Checkstyle ends with 15 errors.
