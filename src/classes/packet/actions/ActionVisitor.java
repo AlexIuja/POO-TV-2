@@ -99,4 +99,7 @@ public interface ActionVisitor {
 
     Output visit(Back back, Site site);
     Output visit(Subscribe subscribe, Site site);
+    Output visit(AddMovie addMovie, Site site);
+    Output visit(DeleteMovie deleteMovie, Site site);
+
 }

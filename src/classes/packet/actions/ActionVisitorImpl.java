@@ -578,12 +578,12 @@ public final class ActionVisitorImpl implements ActionVisitor {
         return output;
     }
 
-    @Override 
+    @Override
     public Output visit(Back back, Site site) {
         Output output = new Output();
         if(!site.getPrevPageIndexes().isEmpty()) {
-            site.setCurrentPage(site.getAvailablePages().get(site.getPrevPageIndexes().get(site.getPrevPageIndexes().size())));
-            site.getPrevPageIndexes().remove(site.getPrevPageIndexes().size());
+            site.setCurrentPage(site.getAvailablePages().get(site.getPrevPageIndexes().get(site.getPrevPageIndexes().size() - 1)));
+            site.getPrevPageIndexes().remove(site.getPrevPageIndexes().size() - 1);
             return null;
         }
         output.setError("Error");
@@ -596,7 +596,67 @@ public final class ActionVisitorImpl implements ActionVisitor {
     public Output visit(Subscribe subscribe, Site site) {
         Output output = new Output();
         if(!site.getCurrentUser().getAllowedMovies().isEmpty()) {
+            /*
+            de lucrat
+             */
+
             return null;
+        }
+        output.setError("Error");
+        output.setCurrentUser(null);
+        output.getCurrentMoviesList().clear();
+        return output;
+    }
+
+    @Override
+    public Output visit(AddMovie addMovie, Site site) {
+        Output output = new Output();
+        int k = 0;
+        for(int i = 0; i < site.getMoviesIn().size(); i++)
+            if(addMovie.getAddedMovie().getName().equals(site.getMoviesIn().get(i).getName())) {
+                k++;
+            }
+        if(k == 0) {
+            Movie newMovie = new Movie(addMovie.getAddedMovie());
+            site.getMoviesIn().add(newMovie);
+            return null;
+        }
+        output.setCurrentUser(null);
+        output.setError("Error");
+        output.getCurrentMoviesList().clear();
+        return output;
+    }
+
+    @Override
+    public Output visit(DeleteMovie deleteMovie, Site site) {
+        Output output = new Output();
+        int k = 0;
+        for(int i = 0; i < site.getMoviesIn().size(); i++) {
+            if(site.getMoviesIn().get(i).getName().equals(deleteMovie.getDeletedMovie()))
+                k++;
+        }
+        if(k == 0)
+            System.out.println("probabil");
+        if(k != 0) {
+            for(int i = 0; i < site.getUsersIn().size(); i++) {
+                for(int j = 0; j < site.getUsersIn().get(i).getAllowedMovies().size(); j++)
+                    if(site.getUsersIn().get(i).getAllowedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        site.getUsersIn().get(i).getAllowedMovies().remove(j);
+                for(int j = 0; j < site.getUsersIn().get(i).getWatchedMovies().size(); j++)
+                    if(site.getUsersIn().get(i).getWatchedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        site.getUsersIn().get(i).getWatchedMovies().remove(j);
+                for(int j = 0; j < site.getUsersIn().get(i).getPurchasedMovies().size(); j++)
+                    if(site.getUsersIn().get(i).getPurchasedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        site.getUsersIn().get(i).getPurchasedMovies().remove(j);
+                for(int j = 0; j < site.getUsersIn().get(i).getLikedMovies().size(); j++)
+                    if(site.getUsersIn().get(i).getLikedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        site.getUsersIn().get(i).getLikedMovies().remove(j);
+                if(site.getCurrentUser().getCredentials().getAccountType().equals("premium")) {
+                    site.getCurrentUser().setNumFreePremiumMovies(site.getCurrentUser().getNumFreePremiumMovies() + 1);
+                } else if(site.getCurrentUser().getCredentials().getAccountType().equals("standard")) {
+                    site.getCurrentUser().setTokensCount(site.getCurrentUser().getTokensCount() + 2);
+                }
+            }
         }
         output.setError("Error");
         output.setCurrentUser(null);

@@ -4,14 +4,16 @@ import classes.fileio.ActionInput;
 import classes.packet.Output;
 import classes.packet.Site;
 
-public class Subscribe implements Action{
+public class DeleteMovie implements Action{
     private String type;
-    private String subscribedGenre;
+    private String feature;
+    private String deletedMovie;
     private Site site;
 
-    public Subscribe(ActionInput input, Site site) {
+    public DeleteMovie(ActionInput input, Site site) {
         type = input.getType();
-        subscribedGenre = input.getSubscribedGenre();
+        feature = input.getFeature();
+        deletedMovie = input.getDeletedMovie();
         this.site = site;
     }
 
@@ -23,12 +25,20 @@ public class Subscribe implements Action{
         this.type = type;
     }
 
-    public String getSubscribedGenre() {
-        return subscribedGenre;
+    public String getFeature() {
+        return feature;
     }
 
-    public void setSubscribedGenre(String subscribedGenre) {
-        this.subscribedGenre = subscribedGenre;
+    public void setFeature(String feature) {
+        this.feature = feature;
+    }
+
+    public String getDeletedMovie() {
+        return deletedMovie;
+    }
+
+    public void setDeletedMovie(String deletedMovie) {
+        this.deletedMovie = deletedMovie;
     }
 
     public Site getSite() {
@@ -42,14 +52,5 @@ public class Subscribe implements Action{
     @Override
     public Output accept(ActionVisitor visitor) {
         return visitor.visit(this, site);
-    }
-
-    @Override
-    public String toString() {
-        return "Subscribe{" +
-                "type='" + type + '\'' +
-                ", subscribedGenre='" + subscribedGenre + '\'' +
-                ", site=" + site +
-                '}';
     }
 }

@@ -59,6 +59,10 @@ public final class Site {
                 actionsIn.add(new Back(input, this));
             } else if (input.getType().equals("subscribe")) {
                 actionsIn.add(new Subscribe(input, this));
+            } else if (input.getFeature().equals("add")) {
+                actionsIn.add(new AddMovie(input, this));
+            } else if (input.getFeature().equals("delete")) {
+                actionsIn.add(new DeleteMovie(input, this));
             } else if (input.getFeature().equals("login")) {
                 actionsIn.add(new Login(input, this));
             } else if (input.getFeature().equals("register")) {
@@ -202,6 +206,7 @@ public final class Site {
         for (Action action : actions) {
             Output p = action.accept(visitor);
             if (p != null) {
+                System.out.println(action + "\n\t  ---> " + action.accept(visitor));
                 out = objectWriter.writeValueAsString(p);
                 JsonNode n = objectMapper.readTree(out);
                 output.add(n);

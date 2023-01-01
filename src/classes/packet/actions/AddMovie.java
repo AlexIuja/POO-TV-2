@@ -1,17 +1,20 @@
 package classes.packet.actions;
 
 import classes.fileio.ActionInput;
+import classes.fileio.MovieInput;
 import classes.packet.Output;
 import classes.packet.Site;
 
-public class Subscribe implements Action{
+public class AddMovie implements Action{
     private String type;
-    private String subscribedGenre;
+    private String feature;
+    private MovieInput addedMovie;
     private Site site;
 
-    public Subscribe(ActionInput input, Site site) {
+    public AddMovie(ActionInput input, Site site) {
         type = input.getType();
-        subscribedGenre = input.getSubscribedGenre();
+        feature = input.getFeature();
+        addedMovie = input.getAddedMovie();
         this.site = site;
     }
 
@@ -23,12 +26,20 @@ public class Subscribe implements Action{
         this.type = type;
     }
 
-    public String getSubscribedGenre() {
-        return subscribedGenre;
+    public String getFeature() {
+        return feature;
     }
 
-    public void setSubscribedGenre(String subscribedGenre) {
-        this.subscribedGenre = subscribedGenre;
+    public void setFeature(String feature) {
+        this.feature = feature;
+    }
+
+    public MovieInput getAddedMovie() {
+        return addedMovie;
+    }
+
+    public void setAddedMovie(MovieInput addedMovie) {
+        this.addedMovie = addedMovie;
     }
 
     public Site getSite() {
@@ -46,9 +57,10 @@ public class Subscribe implements Action{
 
     @Override
     public String toString() {
-        return "Subscribe{" +
+        return "AddMovie{" +
                 "type='" + type + '\'' +
-                ", subscribedGenre='" + subscribedGenre + '\'' +
+                ", feature='" + feature + '\'' +
+                ", addedMovie=" + addedMovie +
                 ", site=" + site +
                 '}';
     }
