@@ -360,10 +360,15 @@ public final class ActionVisitorImpl implements ActionVisitor {
                             // in cazul in care este premium si mai are filme gratis
                             // (din cele 15 initiale)
                             // adaugam filmul in lista de filme cumparate si returnam outputul
+
+                            if(site.getCurrentUser().getPurchasedMovies().contains(site.getCurrentUser().getAllowedMovies().get(i)))
+                                return null; //verificam daca un film a mai fost cumparat inainte
+
                             int numFreePremMovies = site.getCurrentUser().getNumFreePremiumMovies();
                             site.getCurrentUser().setNumFreePremiumMovies(numFreePremMovies - 1);
                             output.setError(null);
                             output.setCurrentUser(site.getCurrentUser());
+
                             site.getCurrentUser().getPurchasedMovies()
                                     .add(site.getCurrentUser().getAllowedMovies().get(i));
                             ArrayList<Movie> outputPurchaseCurrMovie = new ArrayList<>();
@@ -435,6 +440,11 @@ public final class ActionVisitorImpl implements ActionVisitor {
                         //fara niciun misto, nu are niciun sens, dar se potrivea valoarea
                         // si imi era lene sa fac alta constanta, aici trebuia de fapt sa
                         // verificam daca nota acordata este [0,5]
+//
+//                        if(site.getCurrentUser().getRatedMovies().contains(site.getCurrentUser().getWatchedMovies().get(i)))
+//                            return null; //verificam daca un film a mai fost cumparat inainte
+
+
                         site.getCurrentUser().getWatchedMovies().get(i)
                                 .setNumRatings(site.getCurrentUser().getWatchedMovies().get(i)
                                         .getNumRatings() + 1);
@@ -560,6 +570,14 @@ public final class ActionVisitorImpl implements ActionVisitor {
                         .getName().equals(watch.getMovie())) {
                     // verificam daca am achizitionat filmul inainte de a-l urmari
                     // apoi il adaugam in lista utilizatorului si construim output-ul
+
+                    if(site.getCurrentUser().getWatchedMovies().contains(site.getCurrentUser().getPurchasedMovies().get(i))) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
+
                     site.getCurrentUser().getWatchedMovies()
                             .add(site.getCurrentUser().getPurchasedMovies().get(i));
                     output.setError(null);
@@ -584,6 +602,24 @@ public final class ActionVisitorImpl implements ActionVisitor {
         if(!site.getPrevPageIndexes().isEmpty()) {
             site.setCurrentPage(site.getAvailablePages().get(site.getPrevPageIndexes().get(site.getPrevPageIndexes().size() - 1)));
             site.getPrevPageIndexes().remove(site.getPrevPageIndexes().size() - 1);
+
+            if(site.getCurrentPage().getPageName().equals("movies")) {
+                site.setCurrentPage(site.getAvailablePages().get(Site.MOVIES_ID));
+                output.setCurrentUser(site.getCurrentUser());
+                ArrayList<Movie> currMovies = new ArrayList<>();
+                for (int j = 0; j < site.getMoviesIn().size(); j++) {
+                    if (!site.getMoviesIn().get(j).getCountriesBanned()
+                            .contains(site.getCurrentUser().getCredentials().getCountry())) {
+                        currMovies.add(site.getMoviesIn().get(j));
+                    }
+                }
+                site.getCurrentUser().setAllowedMovies(currMovies);
+                setMoviesAllowedInCountry(currMovies);
+                output.setCurrentMoviesList(currMovies);
+                output.setError(null);
+                return output;
+            }
+
             return null;
         }
         output.setError("Error");
@@ -635,8 +671,6 @@ public final class ActionVisitorImpl implements ActionVisitor {
             if(site.getMoviesIn().get(i).getName().equals(deleteMovie.getDeletedMovie()))
                 k++;
         }
-        if(k == 0)
-            System.out.println("probabil");
         if(k != 0) {
             for(int i = 0; i < site.getUsersIn().size(); i++) {
                 for(int j = 0; j < site.getUsersIn().get(i).getAllowedMovies().size(); j++)
@@ -657,6 +691,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     site.getCurrentUser().setTokensCount(site.getCurrentUser().getTokensCount() + 2);
                 }
             }
+            return null;
         }
         output.setError("Error");
         output.setCurrentUser(null);

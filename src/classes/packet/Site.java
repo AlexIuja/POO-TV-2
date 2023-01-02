@@ -57,7 +57,7 @@ public final class Site {
                 actionsIn.add(new ChangePage(input, this));
             } else if (input.getType().equals("back")) {
                 actionsIn.add(new Back(input, this));
-            } else if (input.getType().equals("subscribe")) {
+            } else if (input.getFeature().equals("subscribe")) {
                 actionsIn.add(new Subscribe(input, this));
             } else if (input.getFeature().equals("add")) {
                 actionsIn.add(new AddMovie(input, this));
@@ -203,10 +203,14 @@ public final class Site {
                      final ArrayNode output, final String[] args) throws IOException {
         ActionVisitor visitor = new ActionVisitorImpl();
         String out;
+
+        int taskCounter = 0;
+
         for (Action action : actions) {
             Output p = action.accept(visitor);
+            taskCounter++;
             if (p != null) {
-                System.out.println(action + "\n\t  ---> " + action.accept(visitor));
+                System.out.println(taskCounter + ") " + action + "\n\t  ---> " + p);
                 out = objectWriter.writeValueAsString(p);
                 JsonNode n = objectMapper.readTree(out);
                 output.add(n);
