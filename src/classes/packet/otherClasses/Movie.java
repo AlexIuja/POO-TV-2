@@ -53,7 +53,7 @@ public final class Movie {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(final String year) {
         this.year = year;
     }
 
@@ -117,7 +117,7 @@ public final class Movie {
         return allRatings;
     }
 
-    public void setAllRatings(ArrayList<Rating> allRatings) {
+    public void setAllRatings(final ArrayList<Rating> allRatings) {
         this.allRatings = allRatings;
     }
 

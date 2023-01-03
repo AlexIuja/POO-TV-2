@@ -4,13 +4,13 @@ import classes.fileio.ActionInput;
 import classes.packet.otherClasses.Output;
 import classes.packet.otherClasses.Site;
 
-public class DeleteMovie implements Action{
+public final class DeleteMovie implements Action {
     private String type;
     private String feature;
     private String deletedMovie;
     private Site site;
 
-    public DeleteMovie(ActionInput input, Site site) {
+    public DeleteMovie(final ActionInput input, final Site site) {
         type = input.getType();
         feature = input.getFeature();
         deletedMovie = input.getDeletedMovie();
@@ -21,7 +21,7 @@ public class DeleteMovie implements Action{
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -29,7 +29,7 @@ public class DeleteMovie implements Action{
         return feature;
     }
 
-    public void setFeature(String feature) {
+    public void setFeature(final String feature) {
         this.feature = feature;
     }
 
@@ -37,7 +37,7 @@ public class DeleteMovie implements Action{
         return deletedMovie;
     }
 
-    public void setDeletedMovie(String deletedMovie) {
+    public void setDeletedMovie(final String deletedMovie) {
         this.deletedMovie = deletedMovie;
     }
 
@@ -45,12 +45,12 @@ public class DeleteMovie implements Action{
         return site;
     }
 
-    public void setSite(Site site) {
+    public void setSite(final Site site) {
         this.site = site;
     }
 
     @Override
-    public Output accept(ActionVisitor visitor) {
+    public Output accept(final ActionVisitor visitor) {
         return visitor.visit(this, site);
     }
 }

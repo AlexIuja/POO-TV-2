@@ -3,10 +3,10 @@ package classes.packet.actions;
 import classes.packet.otherClasses.Output;
 import classes.packet.otherClasses.Site;
 
-public class LastRecom implements Action{
+public final class LastRecom implements Action {
     private Site site;
 
-    public LastRecom(Site site) {
+    public LastRecom(final Site site) {
         this.site = site;
     }
 
@@ -14,12 +14,12 @@ public class LastRecom implements Action{
         return site;
     }
 
-    public void setSite(Site site) {
+    public void setSite(final Site site) {
         this.site = site;
     }
 
     @Override
-    public Output accept(ActionVisitor visitor) {
+    public Output accept(final ActionVisitor visitor) {
         return visitor.visit(this, site);
     }
 

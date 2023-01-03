@@ -5,13 +5,13 @@ import classes.fileio.MovieInput;
 import classes.packet.otherClasses.Output;
 import classes.packet.otherClasses.Site;
 
-public class AddMovie implements Action{
+public final class AddMovie implements Action {
     private String type;
     private String feature;
     private MovieInput addedMovie;
     private Site site;
 
-    public AddMovie(ActionInput input, Site site) {
+    public AddMovie(final ActionInput input, final Site site) {
         type = input.getType();
         feature = input.getFeature();
         addedMovie = input.getAddedMovie();
@@ -22,7 +22,7 @@ public class AddMovie implements Action{
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -30,7 +30,7 @@ public class AddMovie implements Action{
         return feature;
     }
 
-    public void setFeature(String feature) {
+    public void setFeature(final String feature) {
         this.feature = feature;
     }
 
@@ -38,7 +38,7 @@ public class AddMovie implements Action{
         return addedMovie;
     }
 
-    public void setAddedMovie(MovieInput addedMovie) {
+    public void setAddedMovie(final MovieInput addedMovie) {
         this.addedMovie = addedMovie;
     }
 
@@ -46,22 +46,22 @@ public class AddMovie implements Action{
         return site;
     }
 
-    public void setSite(Site site) {
+    public void setSite(final Site site) {
         this.site = site;
     }
 
     @Override
-    public Output accept(ActionVisitor visitor) {
+    public Output accept(final ActionVisitor visitor) {
         return visitor.visit(this, site);
     }
 
     @Override
     public String toString() {
-        return "AddMovie{" +
-                "type='" + type + '\'' +
-                ", feature='" + feature + '\'' +
-                ", addedMovie=" + addedMovie +
-                ", site=" + site +
-                '}';
+        return "AddMovie{"
+                + "type='" + type + '\''
+                + ", feature='" + feature + '\''
+                + ", addedMovie=" + addedMovie
+                + ", site=" + site
+                + '}';
     }
 }

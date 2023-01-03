@@ -96,11 +96,44 @@ public interface ActionVisitor {
     Output visit(Watch watch, Site site);
 
 
-
+    /**
+     *
+     * @param back
+     * @param site
+     * @return
+     */
     Output visit(Back back, Site site);
+
+    /**
+     *
+     * @param subscribe
+     * @param site
+     * @return
+     */
     Output visit(Subscribe subscribe, Site site);
+
+    /**
+     *
+     * @param addMovie
+     * @param site
+     * @return
+     */
     Output visit(AddMovie addMovie, Site site);
+
+    /**
+     *
+     * @param deleteMovie
+     * @param site
+     * @return
+     */
     Output visit(DeleteMovie deleteMovie, Site site);
+
+    /**
+     *
+     * @param lastRecom
+     * @param site
+     * @return
+     */
 
     Output visit(LastRecom lastRecom, Site site);
 }

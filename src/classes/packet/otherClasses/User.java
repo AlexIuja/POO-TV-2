@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 
-public final class User implements ObserverInterface{
+public final class User implements ObserverInterface {
 
     private CredentialsInput credentials;
     private int tokensCount;
@@ -109,7 +109,7 @@ public final class User implements ObserverInterface{
         return notifications;
     }
 
-    public void setNotifications(ArrayList<Notification> notifications) {
+    public void setNotifications(final ArrayList<Notification> notifications) {
         this.notifications = notifications;
     }
 
@@ -117,29 +117,29 @@ public final class User implements ObserverInterface{
         return subscribedGenres;
     }
 
-    public void setSubscribedGenres(ArrayList<String> subscribedGenres) {
+    public void setSubscribedGenres(final ArrayList<String> subscribedGenres) {
         this.subscribedGenres = subscribedGenres;
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                "credentials=" + credentials +
-                ", tokensCount=" + tokensCount +
-                ", numFreePremiumMovies=" + numFreePremiumMovies +
-                ", purchasedMovies=" + purchasedMovies +
-                ", watchedMovies=" + watchedMovies +
-                ", likedMovies=" + likedMovies +
-                ", ratedMovies=" + ratedMovies +
-                ", notifications=" + notifications +
-                '}';
+        return "User{"
+                + "credentials=" + credentials
+                + ", tokensCount=" + tokensCount
+                + ", numFreePremiumMovies=" + numFreePremiumMovies
+                + ", purchasedMovies=" + purchasedMovies
+                + ", watchedMovies=" + watchedMovies
+                + ", likedMovies=" + likedMovies
+                + ", ratedMovies=" + ratedMovies
+                + ", notifications=" + notifications
+                + '}';
     }
 
     @Override
-    public void update(DatabaseAux databaseAux) {
-        if(!databaseAux.getMovie().getCountriesBanned().contains(credentials.getCountry())) {
-            if(databaseAux.getCommand().equals("ADD")) {
-                for(int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
+    public void update(final DatabaseAux databaseAux) {
+        if (!databaseAux.getMovie().getCountriesBanned().contains(credentials.getCountry())) {
+            if (databaseAux.getCommand().equals("ADD")) {
+                for (int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
                     if (subscribedGenres.contains(databaseAux.getMovie().getGenres().get(i))) {
                         Notification notification = new Notification();
                         notification.setMessage(databaseAux.getCommand());
@@ -148,9 +148,8 @@ public final class User implements ObserverInterface{
                         return;
                     }
                 }
-            }
-            else if(databaseAux.getCommand().equals("DELETE")) {
-                for(int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
+            } else if (databaseAux.getCommand().equals("DELETE")) {
+                for (int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
                     if (subscribedGenres.contains(databaseAux.getMovie().getGenres().get(i))) {
                         Notification notification = new Notification();
                         notification.setMessage(databaseAux.getCommand());

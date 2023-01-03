@@ -1,6 +1,23 @@
 package classes.packet.otherClasses;
-
-import classes.packet.actions.*;
+import classes.packet.actions.Action;
+import classes.packet.actions.ActionVisitor;
+import classes.packet.actions.ActionVisitorImpl;
+import classes.packet.actions.AddMovie;
+import classes.packet.actions.Back;
+import classes.packet.actions.BuyPrem;
+import classes.packet.actions.BuyTokens;
+import classes.packet.actions.ChangePage;
+import classes.packet.actions.DeleteMovie;
+import classes.packet.actions.Filter;
+import classes.packet.actions.LastRecom;
+import classes.packet.actions.Like;
+import classes.packet.actions.Login;
+import classes.packet.actions.Purchase;
+import classes.packet.actions.Rate;
+import classes.packet.actions.Register;
+import classes.packet.actions.Search;
+import classes.packet.actions.Subscribe;
+import classes.packet.actions.Watch;
 import classes.packet.pages.HomepageAutentificat;
 import classes.packet.pages.HomepageNeautentificat;
 import classes.packet.pages.LoginPage;
@@ -17,13 +34,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public final class Site implements SubjectInterface{
+public final class Site implements SubjectInterface {
 
     public static final int HOMEPAGENEAUT_ID = 0;
     public static final int LOGIN_ID = 1;
@@ -146,7 +162,7 @@ public final class Site implements SubjectInterface{
         return usersIn;
     }
 
-    public void setUsersIn(ArrayList<ObserverInterface> usersIn) {
+    public void setUsersIn(final ArrayList<ObserverInterface> usersIn) {
         this.usersIn = usersIn;
     }
 
@@ -186,7 +202,7 @@ public final class Site implements SubjectInterface{
         return prevPageIndexes;
     }
 
-    public void setPrevPageIndexes(ArrayList<Integer> prevPageIndex) {
+    public void setPrevPageIndexes(final ArrayList<Integer> prevPageIndex) {
         this.prevPageIndexes = prevPageIndex;
     }
 
@@ -221,18 +237,19 @@ public final class Site implements SubjectInterface{
     }
 
     @Override
-    public void addUser(ObserverInterface o) {
+    public void addUser(final ObserverInterface o) {
         usersIn.add(o);
     }
 
     @Override
-    public void delUser(ObserverInterface o) {
+    public void delUser(final ObserverInterface o) {
         usersIn.remove(o);
     }
 
     @Override
-    public void notifyUpdate(DatabaseAux databaseAux) {
-        for(ObserverInterface o : usersIn)
+    public void notifyUpdate(final DatabaseAux databaseAux) {
+        for (ObserverInterface o : usersIn) {
             o.update(databaseAux);
+        }
     }
 }

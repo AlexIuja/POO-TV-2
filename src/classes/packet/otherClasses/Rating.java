@@ -1,10 +1,10 @@
 package classes.packet.otherClasses;
 
-public class Rating {
+public final class Rating {
     private int rating;
     private User user;
 
-    public Rating(int rating, User user) {
+    public Rating(final int rating, final User user) {
         this.rating = rating;
         this.user = user;
     }
@@ -13,7 +13,7 @@ public class Rating {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(final int rating) {
         this.rating = rating;
     }
 
@@ -21,7 +21,7 @@ public class Rating {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(final User user) {
         this.user = user;
     }
 }

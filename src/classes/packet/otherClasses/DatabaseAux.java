@@ -1,10 +1,10 @@
 package classes.packet.otherClasses;
 
-public class DatabaseAux {
+public final class DatabaseAux {
     private Movie movie;
     private String command;
 
-    public DatabaseAux(Movie movie, String command) {
+    public DatabaseAux(final Movie movie, final String command) {
         this.movie = movie;
         this.command = command;
     }
@@ -13,7 +13,7 @@ public class DatabaseAux {
         return movie;
     }
 
-    public void setMovie(Movie movie) {
+    public void setMovie(final Movie movie) {
         this.movie = movie;
     }
 
@@ -21,7 +21,7 @@ public class DatabaseAux {
         return command;
     }
 
-    public void setCommand(String command) {
+    public void setCommand(final String command) {
         this.command = command;
     }
 }

@@ -4,12 +4,12 @@ import classes.fileio.ActionInput;
 import classes.packet.otherClasses.Output;
 import classes.packet.otherClasses.Site;
 
-public class Subscribe implements Action{
+public final class Subscribe implements Action {
     private String type;
     private String subscribedGenre;
     private Site site;
 
-    public Subscribe(ActionInput input, Site site) {
+    public Subscribe(final ActionInput input, final Site site) {
         type = input.getType();
         subscribedGenre = input.getSubscribedGenre();
         this.site = site;
@@ -19,7 +19,7 @@ public class Subscribe implements Action{
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -27,7 +27,7 @@ public class Subscribe implements Action{
         return subscribedGenre;
     }
 
-    public void setSubscribedGenre(String subscribedGenre) {
+    public void setSubscribedGenre(final String subscribedGenre) {
         this.subscribedGenre = subscribedGenre;
     }
 
@@ -35,21 +35,21 @@ public class Subscribe implements Action{
         return site;
     }
 
-    public void setSite(Site site) {
+    public void setSite(final Site site) {
         this.site = site;
     }
 
     @Override
-    public Output accept(ActionVisitor visitor) {
+    public Output accept(final ActionVisitor visitor) {
         return visitor.visit(this, site);
     }
 
     @Override
     public String toString() {
-        return "Subscribe{" +
-                "type='" + type + '\'' +
-                ", subscribedGenre='" + subscribedGenre + '\'' +
-                ", site=" + site +
-                '}';
+        return "Subscribe{"
+                + "type='" + type + '\''
+                + ", subscribedGenre='" + subscribedGenre + '\''
+                + ", site=" + site
+                + '}';
     }
 }
