@@ -1,4 +1,4 @@
-package classes.packet;
+package classes.packet.otherClasses;
 
 public class Notification {
     private String movieName;

@@ -1,7 +1,7 @@
 package classes.packet.actions;
 
-import classes.packet.Output;
-import classes.packet.Site;
+import classes.packet.otherClasses.Output;
+import classes.packet.otherClasses.Site;
 import classes.fileio.ActionInput;
 
 public final class Purchase implements Action {

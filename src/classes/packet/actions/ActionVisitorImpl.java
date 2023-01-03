@@ -1,10 +1,7 @@
 package classes.packet.actions;
 
-import classes.packet.Movie;
-import classes.packet.Output;
+import classes.packet.otherClasses.*;
 import classes.packet.pages.SeeDetailsPage;
-import classes.packet.Site;
-import classes.packet.User;
 import classes.fileio.CredentialsInput;
 import classes.packet.pages.SitePage;
 
@@ -63,6 +60,13 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     site.setCurrentPage(site.getAvailablePages().get(Site.REGISTER_ID));
                     return null;
                 } else if (changePage.getPage().equals("logout")) {
+                    if(site.getCurrentUser() == null) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
+
                     // in cazul in care putem sa mergem pe pagina de logout,
                     // setam pagina curenta a site-ului drept HomepageNeautentificat
                     site.getPrevPageIndexes().clear();
@@ -70,6 +74,12 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     site.setCurrentUser(null);
                     return null;
                 } else if (changePage.getPage().equals("movies")) {
+                    if(site.getCurrentUser() == null) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
                     // in cazul in care putem sa mergem pe pagina de movies,
                     // setam pagina curenta a site-ului drept Movies
                     // si cream lista de filme pe care un utilizator le poate accesa
@@ -90,12 +100,24 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     output.setError(null);
                     return output;
                 } else if (changePage.getPage().equals("upgrades")) {
+                    if(site.getCurrentUser() == null) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
                     // in cazul in care putem sa mergem pe pagina de upgrades,
                     // setam pagina curenta a site-ului drept UpgradesPage
                     site.getPrevPageIndexes().add(getPageIdx(site.getCurrentPage()));
                     site.setCurrentPage(site.getAvailablePages().get(Site.UPGRADES_ID));
                     return null;
                 } else if (changePage.getPage().equals("see details")) {
+                    if(site.getCurrentUser() == null) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
                     // in cazul in care putem sa mergem pe pagina de see details,
                     // setam pagina curenta a site-ului drept SeeDetailsPage
                     for (int j = 0; j < site.getCurrentUser()
@@ -167,7 +189,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
             // verificam daca suntem pe pagina de upgrades
             if (balance >= buyTokens.getCount()) {
                 // verificam daca avem suficient balance
-                site.getCurrentUser().setTokensCount(buyTokens.getCount());
+                site.getCurrentUser().setTokensCount(site.getCurrentUser().getTokensCount() + buyTokens.getCount());
                 site.getCurrentUser().getCredentials()
                         .setBalance(String.valueOf(balance - buyTokens.getCount()));
                 // adaugam token-urile in cont si parsam balance-ul nou drept String
@@ -312,16 +334,16 @@ public final class ActionVisitorImpl implements ActionVisitor {
         if (site.getCurrentPage().equals(site.getAvailablePages().get(Site.LOGIN_ID))) {
             // verificam daca ne aflam pe pagina de login
             for (int i = 0; i < site.getUsersIn().size(); i++) {
-                if (site.getUsersIn().get(i).getCredentials().getName().equals(login.getName())) {
-                    if (site.getUsersIn().get(i).getCredentials()
+                if (((User)site.getUsersIn().get(i)).getCredentials().getName().equals(login.getName())) {
+                    if (((User)site.getUsersIn().get(i)).getCredentials()
                             .getPassword().equals(login.getPassword())) {
                         // verificam daca exista in lista de utilizatori,
                         // iar in cazul in care exista,setam pagina drept HomepageAutentificat,
                         // setam userul curent al site-ului si setam outputul
                         site.setCurrentPage(site.getAvailablePages().get(Site.HOMEPAGEAUT_ID));
-                        site.setCurrentUser(site.getUsersIn().get(i));
+                        site.setCurrentUser(((User)site.getUsersIn().get(i)));
                         output.setError(null);
-                        output.setCurrentUser(site.getUsersIn().get(i));
+                        output.setCurrentUser(((User)site.getUsersIn().get(i)));
                         output.getCurrentMoviesList().clear();
                         return output;
                     }
@@ -352,6 +374,14 @@ public final class ActionVisitorImpl implements ActionVisitor {
             for (int i = 0; i < site.getCurrentUser().getAllowedMovies().size(); i++) {
                 if (site.getCurrentUser().getAllowedMovies().get(i)
                         .getName().equals(purchase.getMovie())) {
+
+                    if(site.getCurrentUser().getPurchasedMovies().contains(site.getCurrentUser().getAllowedMovies().get(i))) {
+                        output.setError("Error");
+                        output.setCurrentUser(null);
+                        output.getCurrentMoviesList().clear();
+                        return output;
+                    }
+
                     // verificam daca filmul se afla in lista de filme
                     // la care are acces utilizatorul
                     if (site.getCurrentUser().getCredentials().getAccountType().equals("premium")) {
@@ -440,21 +470,41 @@ public final class ActionVisitorImpl implements ActionVisitor {
                         //fara niciun misto, nu are niciun sens, dar se potrivea valoarea
                         // si imi era lene sa fac alta constanta, aici trebuia de fapt sa
                         // verificam daca nota acordata este [0,5]
-//
-//                        if(site.getCurrentUser().getRatedMovies().contains(site.getCurrentUser().getWatchedMovies().get(i)))
-//                            return null; //verificam daca un film a mai fost cumparat inainte
+
+                        if(site.getCurrentUser().getRatedMovies().contains(site.getCurrentUser().getWatchedMovies().get(i))) {
+                            for(int j = 0; j < site.getCurrentUser().getWatchedMovies().get(i).getAllRatings().size(); j++) {
+                                if(site.getCurrentUser().getWatchedMovies().get(i).getAllRatings().get(j).getUser().equals(site.getCurrentUser())) {
+                                    site.getCurrentUser().getWatchedMovies().get(i).getAllRatings().get(j).setRating(rate.getRate());
+                                    int ratingSum = 0;
+                                    for (int k = 0; k < site.getCurrentUser().getWatchedMovies()
+                                            .get(i).getAllRatings().size(); k++) {
+                                        ratingSum += site.getCurrentUser().getWatchedMovies()
+                                                .get(i).getAllRatings().get(k).getRating();
+                                    }
+                                    site.getCurrentUser().getWatchedMovies().get(i)
+                                            .setRating(((double) ratingSum) / site.getCurrentUser()
+                                                    .getWatchedMovies().get(i).getNumRatings());
+                                    output.setCurrentUser(site.getCurrentUser());
+                                    output.setError(null);
+                                    ArrayList<Movie> outputRateCurrMovie = new ArrayList<>();
+                                    outputRateCurrMovie.add(site.getCurrentUser().getWatchedMovies().get(i));
+                                    output.setCurrentMoviesList(outputRateCurrMovie);
+                                    return output;
+                                }
+                            }
+                        }
 
 
                         site.getCurrentUser().getWatchedMovies().get(i)
                                 .setNumRatings(site.getCurrentUser().getWatchedMovies().get(i)
                                         .getNumRatings() + 1);
                         site.getCurrentUser().getWatchedMovies().get(i)
-                                .getAllRatings().add(rate.getRate());
+                                .getAllRatings().add(new Rating(rate.getRate(), site.getCurrentUser()));
                         int ratingSum = 0;
                         for (int j = 0; j < site.getCurrentUser().getWatchedMovies()
                                 .get(i).getAllRatings().size(); j++) {
                             ratingSum += site.getCurrentUser().getWatchedMovies()
-                                    .get(i).getAllRatings().get(j);
+                                    .get(i).getAllRatings().get(j).getRating();
                         }
                         site.getCurrentUser().getWatchedMovies().get(i)
                                 .setRating(((double) ratingSum) / site.getCurrentUser()
@@ -488,7 +538,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
             // verificam daca suntem pe RegisterPage
             for (int i = 0; i < site.getUsersIn().size(); i++) {
                 if (register.getCredentials().getName()
-                        .equals(site.getUsersIn().get(i).getCredentials().getName())) {
+                        .equals(((User)site.getUsersIn().get(i)).getCredentials().getName())) {
                     // verificam daca mai exista utilizatorul si afisam mesajul de eroare
                     output.setError("Error");
                     output.setCurrentUser(null);
@@ -510,7 +560,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
             newUser.setCredentials(credentials);
             site.getUsersIn().add(newUser);
             site.setCurrentPage(site.getAvailablePages().get(Site.HOMEPAGEAUT_ID));
-            site.setCurrentUser(site.getUsersIn().get(site.getUsersIn().size() - 1));
+            site.setCurrentUser(((User)site.getUsersIn().get(site.getUsersIn().size() - 1)));
             output.setCurrentUser(site.getCurrentUser());
             output.setError(null);
             return output;
@@ -572,10 +622,14 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     // apoi il adaugam in lista utilizatorului si construim output-ul
 
                     if(site.getCurrentUser().getWatchedMovies().contains(site.getCurrentUser().getPurchasedMovies().get(i))) {
-                        output.setError("Error");
-                        output.setCurrentUser(null);
-                        output.getCurrentMoviesList().clear();
+
+                        output.setError(null);
+                        output.setCurrentUser(site.getCurrentUser());
+                        ArrayList<Movie> outputWatchCurrMovie = new ArrayList<>();
+                        outputWatchCurrMovie.add(site.getCurrentUser().getPurchasedMovies().get(i));
+                        output.setCurrentMoviesList(outputWatchCurrMovie);
                         return output;
+
                     }
 
                     site.getCurrentUser().getWatchedMovies()
@@ -631,12 +685,17 @@ public final class ActionVisitorImpl implements ActionVisitor {
     @Override
     public Output visit(Subscribe subscribe, Site site) {
         Output output = new Output();
-        if(!site.getCurrentUser().getAllowedMovies().isEmpty()) {
-            /*
-            de lucrat
-             */
-
-            return null;
+        if(site.getCurrentPage().equals(site.getAvailablePages().get(Site.SEEDETAILS_ID))) {
+            for(int i = 0; i < site.getMoviesIn().size(); i++) {
+                if(site.getMoviesIn().get(i).equals(((SeeDetailsPage)site.getCurrentPage()).getMovie())) {
+                    if(site.getMoviesIn().get(i).getGenres().contains(subscribe.getSubscribedGenre())) {
+                        if(!site.getCurrentUser().getSubscribedGenres().contains(subscribe.getSubscribedGenre())) {
+                            site.getCurrentUser().getSubscribedGenres().add(subscribe.getSubscribedGenre());
+                            return null;
+                        }
+                    }
+                }
+            }
         }
         output.setError("Error");
         output.setCurrentUser(null);
@@ -655,6 +714,8 @@ public final class ActionVisitorImpl implements ActionVisitor {
         if(k == 0) {
             Movie newMovie = new Movie(addMovie.getAddedMovie());
             site.getMoviesIn().add(newMovie);
+            DatabaseAux databaseAux = new DatabaseAux(newMovie, "ADD");
+            site.notifyUpdate(databaseAux);
             return null;
         }
         output.setCurrentUser(null);
@@ -673,30 +734,62 @@ public final class ActionVisitorImpl implements ActionVisitor {
         }
         if(k != 0) {
             for(int i = 0; i < site.getUsersIn().size(); i++) {
-                for(int j = 0; j < site.getUsersIn().get(i).getAllowedMovies().size(); j++)
-                    if(site.getUsersIn().get(i).getAllowedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
-                        site.getUsersIn().get(i).getAllowedMovies().remove(j);
-                for(int j = 0; j < site.getUsersIn().get(i).getWatchedMovies().size(); j++)
-                    if(site.getUsersIn().get(i).getWatchedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
-                        site.getUsersIn().get(i).getWatchedMovies().remove(j);
-                for(int j = 0; j < site.getUsersIn().get(i).getPurchasedMovies().size(); j++)
-                    if(site.getUsersIn().get(i).getPurchasedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
-                        site.getUsersIn().get(i).getPurchasedMovies().remove(j);
-                for(int j = 0; j < site.getUsersIn().get(i).getLikedMovies().size(); j++)
-                    if(site.getUsersIn().get(i).getLikedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
-                        site.getUsersIn().get(i).getLikedMovies().remove(j);
+                for(int j = 0; j < ((User)site.getUsersIn().get(i)).getAllowedMovies().size(); j++)
+                    if(((User)site.getUsersIn().get(i)).getAllowedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        ((User)site.getUsersIn().get(i)).getAllowedMovies().remove(j);
+                for(int j = 0; j < ((User)site.getUsersIn().get(i)).getWatchedMovies().size(); j++)
+                    if(((User)site.getUsersIn().get(i)).getWatchedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        ((User)site.getUsersIn().get(i)).getWatchedMovies().remove(j);
+                for(int j = 0; j < ((User)site.getUsersIn().get(i)).getPurchasedMovies().size(); j++)
+                    if(((User)site.getUsersIn().get(i)).getPurchasedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        ((User)site.getUsersIn().get(i)).getPurchasedMovies().remove(j);
+                for(int j = 0; j < ((User)site.getUsersIn().get(i)).getLikedMovies().size(); j++)
+                    if(((User)site.getUsersIn().get(i)).getLikedMovies().get(j).getName().equals(deleteMovie.getDeletedMovie()))
+                        ((User)site.getUsersIn().get(i)).getLikedMovies().remove(j);
                 if(site.getCurrentUser().getCredentials().getAccountType().equals("premium")) {
                     site.getCurrentUser().setNumFreePremiumMovies(site.getCurrentUser().getNumFreePremiumMovies() + 1);
                 } else if(site.getCurrentUser().getCredentials().getAccountType().equals("standard")) {
                     site.getCurrentUser().setTokensCount(site.getCurrentUser().getTokensCount() + 2);
                 }
             }
+            Movie movieDeleted = null;
+            for(int i = 0; i < site.getMoviesIn().size(); i++) {
+                if(site.getMoviesIn().get(i).getName().equals(deleteMovie.getDeletedMovie())) {
+                    movieDeleted = new Movie(site.getMoviesIn().get(i));
+                    site.getMoviesIn().remove(i);
+                }
+            }
+            DatabaseAux databaseAux = new DatabaseAux(movieDeleted, "ADD");
+            site.notifyUpdate(databaseAux);
             return null;
         }
         output.setError("Error");
         output.setCurrentUser(null);
         output.getCurrentMoviesList().clear();
         return output;
+    }
+
+    @Override
+    public Output visit(LastRecom lastRecom, Site site) {
+        Output output = new Output();
+        if(site.getCurrentUser() == null) {
+            return null;
+        }
+        if(site.getCurrentUser().getCredentials().getAccountType().equals("premium")) {
+            Notification notification = new Notification();
+            notification.setMessage("Recommendation");
+            if(site.getCurrentUser().getLikedMovies().isEmpty()) {
+                notification.setMovieName("No recommendation");
+            }
+            else
+                notification.setMovieName("No recommendation");
+            site.getCurrentUser().getNotifications().add(notification);
+            output.setCurrentUser(site.getCurrentUser());
+            output.setError(null);
+            output.setCurrentMoviesList(null);
+            return output;
+        }
+        return null;
     }
 
 }

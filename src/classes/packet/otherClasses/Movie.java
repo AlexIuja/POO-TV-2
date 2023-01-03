@@ -1,4 +1,4 @@
-package classes.packet;
+package classes.packet.otherClasses;
 
 import classes.fileio.MovieInput;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,7 +16,7 @@ public final class Movie {
     private double rating;
     private int numRatings;
     @JsonIgnore
-    private ArrayList<Integer> allRatings = new ArrayList<>();
+    private ArrayList<Rating> allRatings = new ArrayList<>();
 
     public Movie(final MovieInput input) {
         name = input.getName();
@@ -36,6 +36,9 @@ public final class Movie {
         genres.addAll(input.getGenres());
         actors.addAll(input.getActors());
         countriesBanned.addAll(input.getCountriesBanned());
+    }
+
+    public Movie() {
     }
 
     public String getName() {
@@ -110,11 +113,11 @@ public final class Movie {
         this.numRatings = numRatings;
     }
 
-    public ArrayList<Integer> getAllRatings() {
+    public ArrayList<Rating> getAllRatings() {
         return allRatings;
     }
 
-    public void setAllRatings(final ArrayList<Integer> allRatings) {
+    public void setAllRatings(ArrayList<Rating> allRatings) {
         this.allRatings = allRatings;
     }
 

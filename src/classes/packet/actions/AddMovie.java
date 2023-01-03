@@ -2,8 +2,8 @@ package classes.packet.actions;
 
 import classes.fileio.ActionInput;
 import classes.fileio.MovieInput;
-import classes.packet.Output;
-import classes.packet.Site;
+import classes.packet.otherClasses.Output;
+import classes.packet.otherClasses.Site;
 
 public class AddMovie implements Action{
     private String type;

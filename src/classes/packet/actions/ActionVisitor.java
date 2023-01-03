@@ -1,7 +1,7 @@
 package classes.packet.actions;
 
-import classes.packet.Output;
-import classes.packet.Site;
+import classes.packet.otherClasses.Output;
+import classes.packet.otherClasses.Site;
 
 public interface ActionVisitor {
     /**
@@ -102,4 +102,5 @@ public interface ActionVisitor {
     Output visit(AddMovie addMovie, Site site);
     Output visit(DeleteMovie deleteMovie, Site site);
 
+    Output visit(LastRecom lastRecom, Site site);
 }

@@ -1,4 +1,4 @@
-package classes.packet;
+package classes.packet.otherClasses;
 
 import classes.packet.actions.*;
 import classes.packet.pages.HomepageAutentificat;
@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public final class Site {
+public final class Site implements SubjectInterface{
 
     public static final int HOMEPAGENEAUT_ID = 0;
     public static final int LOGIN_ID = 1;
@@ -35,7 +35,7 @@ public final class Site {
     public static final int LOGOUT_ID = 7;
     public static final int PREM_PRICE = 10;
     public static final int NUMBER_FREE_PREMIUM_MOVIES = 15;
-    private ArrayList<User> usersIn = new ArrayList<>();
+    private ArrayList<ObserverInterface> usersIn = new ArrayList<>();
     private ArrayList<Movie> moviesIn = new ArrayList<>();
     private ArrayList<Action> actionsIn = new ArrayList<>();
     private ArrayList<SitePage> availablePages = new ArrayList<>();
@@ -85,6 +85,7 @@ public final class Site {
                 actionsIn.add(new BuyTokens(input, this));
             }
         }
+        actionsIn.add(new LastRecom(this));
         availablePages.add(HomepageNeautentificat.getInstance());
         availablePages.add(LoginPage.getInstance());
         availablePages.add(RegisterPage.getInstance());
@@ -141,11 +142,11 @@ public final class Site {
         this.actionsIn = actionsIn;
     }
 
-    public ArrayList<User> getUsersIn() {
+    public ArrayList<ObserverInterface> getUsersIn() {
         return usersIn;
     }
 
-    public void setUsersIn(final ArrayList<User> usersIn) {
+    public void setUsersIn(ArrayList<ObserverInterface> usersIn) {
         this.usersIn = usersIn;
     }
 
@@ -210,12 +211,28 @@ public final class Site {
             Output p = action.accept(visitor);
             taskCounter++;
             if (p != null) {
-                System.out.println(taskCounter + ") " + action + "\n\t  ---> " + p);
+//                System.out.println(taskCounter + ") " + action + "\n\t  ---> " + p);
                 out = objectWriter.writeValueAsString(p);
                 JsonNode n = objectMapper.readTree(out);
                 output.add(n);
             }
         }
         objectWriter.writeValue(new File(args[1]), output);
+    }
+
+    @Override
+    public void addUser(ObserverInterface o) {
+        usersIn.add(o);
+    }
+
+    @Override
+    public void delUser(ObserverInterface o) {
+        usersIn.remove(o);
+    }
+
+    @Override
+    public void notifyUpdate(DatabaseAux databaseAux) {
+        for(ObserverInterface o : usersIn)
+            o.update(databaseAux);
     }
 }

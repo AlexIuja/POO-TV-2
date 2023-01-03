@@ -1,6 +1,6 @@
 package classes.packet.actions;
 
-import classes.packet.Output;
+import classes.packet.otherClasses.Output;
 
 public interface Action {
     /**

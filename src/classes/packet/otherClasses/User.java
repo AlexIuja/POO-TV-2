@@ -1,4 +1,4 @@
-package classes.packet;
+package classes.packet.otherClasses;
 
 import classes.fileio.CredentialsInput;
 import classes.fileio.UserInput;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 
-public final class User {
+public final class User implements ObserverInterface{
 
     private CredentialsInput credentials;
     private int tokensCount;
@@ -18,6 +18,10 @@ public final class User {
     private ArrayList<Notification> notifications = new ArrayList<>();
     @JsonIgnore
     private ArrayList<Movie> allowedMovies = new ArrayList<>();
+    @JsonIgnore
+    private ArrayList<String> subscribedGenres = new ArrayList<>();
+//    @JsonIgnore
+//    private ArrayList<String>
 
     public User() {
         tokensCount = 0;
@@ -109,6 +113,14 @@ public final class User {
         this.notifications = notifications;
     }
 
+    public ArrayList<String> getSubscribedGenres() {
+        return subscribedGenres;
+    }
+
+    public void setSubscribedGenres(ArrayList<String> subscribedGenres) {
+        this.subscribedGenres = subscribedGenres;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -121,5 +133,34 @@ public final class User {
                 ", ratedMovies=" + ratedMovies +
                 ", notifications=" + notifications +
                 '}';
+    }
+
+    @Override
+    public void update(DatabaseAux databaseAux) {
+        if(!databaseAux.getMovie().getCountriesBanned().contains(credentials.getCountry())) {
+            if(databaseAux.getCommand().equals("ADD")) {
+                for(int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
+                    if (subscribedGenres.contains(databaseAux.getMovie().getGenres().get(i))) {
+                        Notification notification = new Notification();
+                        notification.setMessage(databaseAux.getCommand());
+                        notification.setMovieName(databaseAux.getMovie().getName());
+                        notifications.add(notification);
+                        return;
+                    }
+                }
+            }
+            else if(databaseAux.getCommand().equals("DELETE")) {
+                for(int i = 0; i < databaseAux.getMovie().getGenres().size(); i++) {
+                    if (subscribedGenres.contains(databaseAux.getMovie().getGenres().get(i))) {
+                        Notification notification = new Notification();
+                        notification.setMessage(databaseAux.getCommand());
+                        notification.setMovieName(databaseAux.getMovie().getName());
+                        notifications.add(notification);
+                        return;
+                    }
+                }
+            }
+
+        }
     }
 }

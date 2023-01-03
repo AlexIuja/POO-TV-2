@@ -1,6 +1,6 @@
 package classes.packet.pages;
 
-import classes.packet.Movie;
+import classes.packet.otherClasses.Movie;
 
 public final class SeeDetailsPage extends SitePage {
     private static SeeDetailsPage instance = new SeeDetailsPage();
