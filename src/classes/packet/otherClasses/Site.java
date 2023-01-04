@@ -2,22 +2,8 @@ package classes.packet.otherClasses;
 import classes.packet.actions.Action;
 import classes.packet.actions.ActionVisitor;
 import classes.packet.actions.ActionVisitorImpl;
-import classes.packet.actions.AddMovie;
-import classes.packet.actions.Back;
-import classes.packet.actions.BuyPrem;
-import classes.packet.actions.BuyTokens;
-import classes.packet.actions.ChangePage;
-import classes.packet.actions.DeleteMovie;
-import classes.packet.actions.Filter;
+import classes.packet.actions.ActionFactory;
 import classes.packet.actions.LastRecom;
-import classes.packet.actions.Like;
-import classes.packet.actions.Login;
-import classes.packet.actions.Purchase;
-import classes.packet.actions.Rate;
-import classes.packet.actions.Register;
-import classes.packet.actions.Search;
-import classes.packet.actions.Subscribe;
-import classes.packet.actions.Watch;
 import classes.packet.pages.HomepageAutentificat;
 import classes.packet.pages.HomepageNeautentificat;
 import classes.packet.pages.LoginPage;
@@ -68,39 +54,11 @@ public final class Site implements SubjectInterface {
         for (MovieInput input : moviesInput) {
             moviesIn.add(new Movie(input));
         }
+        ActionFactory.setSite(this);
         for (ActionInput input : actionsInput) {
-            if (input.getType().equals("change page")) {
-                actionsIn.add(new ChangePage(input, this));
-            } else if (input.getType().equals("back")) {
-                actionsIn.add(new Back(input, this));
-            } else if (input.getFeature().equals("subscribe")) {
-                actionsIn.add(new Subscribe(input, this));
-            } else if (input.getFeature().equals("add")) {
-                actionsIn.add(new AddMovie(input, this));
-            } else if (input.getFeature().equals("delete")) {
-                actionsIn.add(new DeleteMovie(input, this));
-            } else if (input.getFeature().equals("login")) {
-                actionsIn.add(new Login(input, this));
-            } else if (input.getFeature().equals("register")) {
-                actionsIn.add(new Register(input, this));
-            } else if (input.getFeature().equals("search")) {
-                actionsIn.add(new Search(input, this));
-            } else if (input.getFeature().equals("filter")) {
-                actionsIn.add(new Filter(input, this));
-            } else if (input.getFeature().equals("purchase")) {
-                actionsIn.add(new Purchase(input, this));
-            } else if (input.getFeature().equals("watch")) {
-                actionsIn.add(new Watch(input, this));
-            } else if (input.getFeature().equals("like")) {
-                actionsIn.add(new Like(input, this));
-            } else if (input.getFeature().equals("rate")) {
-                actionsIn.add(new Rate(input, this));
-            } else if (input.getFeature().equals("buy premium account")) {
-                actionsIn.add(new BuyPrem(input, this));
-            } else if (input.getFeature().equals("buy tokens")) {
-                actionsIn.add(new BuyTokens(input, this));
-            }
+            getActionsIn().add(ActionFactory.createAction(input));
         }
+
         actionsIn.add(new LastRecom(this));
         availablePages.add(HomepageNeautentificat.getInstance());
         availablePages.add(LoginPage.getInstance());
