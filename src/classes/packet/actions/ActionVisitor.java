@@ -97,41 +97,41 @@ public interface ActionVisitor {
 
 
     /**
-     *
-     * @param back
-     * @param site
+     * actiunea de a da inapoi pe site
+     * @param back implementarea actiunii de a da inapoi pe site
+     * @param site site-ul care isi modifica campurile dupa actiune
      * @return
      */
     Output visit(Back back, Site site);
 
     /**
      *
-     * @param subscribe
-     * @param site
+     * @param subscribe implementarea actiunii de a te abona la un gen
+     * @param site site-ul care isi modifica campurile dupa actiune
      * @return
      */
     Output visit(Subscribe subscribe, Site site);
 
     /**
      *
-     * @param addMovie
-     * @param site
+     * @param addMovie implementarea actiunii de a adauga un film in baza de date
+     * @param site site-ul care isi modifica campurile dupa actiune
      * @return
      */
     Output visit(AddMovie addMovie, Site site);
 
     /**
      *
-     * @param deleteMovie
-     * @param site
+     * @param deleteMovie implementarea actiunii de a sterge un film din baza de date
+     * @param site site-ul care isi modifica campurile dupa actiune
      * @return
      */
     Output visit(DeleteMovie deleteMovie, Site site);
 
     /**
      *
-     * @param lastRecom
-     * @param site
+     * @param lastRecom implementarea ultimei recomandari pentru utilizatorii premium
+     * @param site site-ul care isi modifica campurile dupa actiune
      * @return
      */
 

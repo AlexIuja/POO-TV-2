@@ -16,11 +16,13 @@ public final class ActionFactory {
      */
     public static Action createAction(final ActionInput input) {
         switch (input.getType()) {
+            // cream cele doua functii pentru lista de actiuni
             case "change page": return new ChangePage(input, site);
             case "back": return new Back(input, site);
             default: //checkstyle handling
         }
         switch (input.getFeature()) {
+            // cream restul de functii
             case "subscribe": return new Subscribe(input, site);
             case "add": return new AddMovie(input, site);
             case "delete": return new DeleteMovie(input, site);

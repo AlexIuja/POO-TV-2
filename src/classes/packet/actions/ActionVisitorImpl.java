@@ -678,11 +678,16 @@ public final class ActionVisitorImpl implements ActionVisitor {
     @Override
     public Output visit(final Back back, final Site site) {
         Output output = new Output();
+        // verificam daca am mai fost pe vreo pagina inainte
         if (!site.getPrevPageIndexes().isEmpty()) {
+            // schimbam pe ultima pagina vizitata
             site.setCurrentPage(site.getAvailablePages().get(site.
                     getPrevPageIndexes().get(site.getPrevPageIndexes().size() - 1)));
+            // stergem ultimul index salvat
             site.getPrevPageIndexes().remove(site.getPrevPageIndexes().size() - 1);
             if (site.getCurrentPage().getPageName().equals("movies")) {
+                // in cazul in care ne intoarcem pe pagina Movies,
+                // trebuie sa afisam output-ul conform actiunii change page pe Movies
                 site.setCurrentPage(site.getAvailablePages().get(Site.MOVIES_ID));
                 output.setCurrentUser(site.getCurrentUser());
                 ArrayList<Movie> currMovies = new ArrayList<>();
@@ -700,6 +705,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
             }
             return null;
         }
+        // in cazul in care nu am mai fost pe nicio pagina inainte, afisam eroare
         output.setError("Error");
         output.setCurrentUser(null);
         output.getCurrentMoviesList().clear();
@@ -710,13 +716,17 @@ public final class ActionVisitorImpl implements ActionVisitor {
     public Output visit(final Subscribe subscribe, final Site site) {
         Output output = new Output();
         if (site.getCurrentPage().equals(site.getAvailablePages().get(Site.SEEDETAILS_ID))) {
+            // verificam daca ne aflam pe pagina See Details, doar de acolo putem sa dam subscribe
             for (int i = 0; i < site.getMoviesIn().size(); i++) {
                 if (site.getMoviesIn().get(i).equals((
                         (SeeDetailsPage) site.getCurrentPage()).getMovie())) {
+                    // intram pe pagina filmului, iar aici verificam daca genul
+                    // la care vrem sa ne abonam se regaseste in lista genurilor filmului actual
                     if (site.getMoviesIn().get(i).getGenres()
                             .contains(subscribe.getSubscribedGenre())) {
                         if (!site.getCurrentUser().getSubscribedGenres()
                                 .contains(subscribe.getSubscribedGenre())) {
+                            // oprim programul si adaugam genul in lista utilizatorului
                             site.getCurrentUser().getSubscribedGenres()
                                     .add(subscribe.getSubscribedGenre());
                             return null;
@@ -725,6 +735,7 @@ public final class ActionVisitorImpl implements ActionVisitor {
                 }
             }
         }
+        // returnam o eroare
         output.setError("Error");
         output.setCurrentUser(null);
         output.getCurrentMoviesList().clear();
@@ -736,17 +747,22 @@ public final class ActionVisitorImpl implements ActionVisitor {
         Output output = new Output();
         int k = 0;
         for (int i = 0; i < site.getMoviesIn().size(); i++) {
+            // verificam daca filmul mai exista in lista site-ului,
+            // un mod foarte ineficient de a face acest lucru
             if (addMovie.getAddedMovie().getName().equals(site.getMoviesIn().get(i).getName())) {
                 k++;
             }
         }
         if (k == 0) {
+            // in cazul in care nu mai exista, il cream,
+            // il adaugam in lista si notificam utilizatorii de schimbare
             Movie newMovie = new Movie(addMovie.getAddedMovie());
             site.getMoviesIn().add(newMovie);
             DatabaseAux databaseAux = new DatabaseAux(newMovie, "ADD");
             site.notifyUpdate(databaseAux);
             return null;
         }
+        //returnam o eroare
         output.setCurrentUser(null);
         output.setError("Error");
         output.getCurrentMoviesList().clear();
@@ -758,11 +774,14 @@ public final class ActionVisitorImpl implements ActionVisitor {
         Output output = new Output();
         int k = 0;
         for (int i = 0; i < site.getMoviesIn().size(); i++) {
+            // aceeasi verificare proasta ca mai inainte
             if (site.getMoviesIn().get(i).getName().equals(deleteMovie.getDeletedMovie())) {
                 k++;
             }
         }
         if (k != 0) {
+            // in cazul in care filmul exista, trebuie sa il stergem
+            // din toate listele tuturor utilizatorilor si din baza de date a site-ului
             for (int i = 0; i < site.getUsersIn().size(); i++) {
                 for (int j = 0; j < ((User) site.getUsersIn().get(i))
                         .getAllowedMovies().size(); j++) {
@@ -808,10 +827,12 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     site.getMoviesIn().remove(i);
                 }
             }
-            DatabaseAux databaseAux = new DatabaseAux(movieDeleted, "ADD");
+            // notificam utilizatorii de schimbare
+            DatabaseAux databaseAux = new DatabaseAux(movieDeleted, "DELETE");
             site.notifyUpdate(databaseAux);
             return null;
         }
+        // afisam o eroare
         output.setError("Error");
         output.setCurrentUser(null);
         output.getCurrentMoviesList().clear();
@@ -820,14 +841,17 @@ public final class ActionVisitorImpl implements ActionVisitor {
 
     @Override
     public Output visit(final LastRecom lastRecom, final Site site) {
+        //am creat o ultima functie pentru recomandarea finala,
+        // intrucat era mult mai usor in acest fel
         Output output = new Output();
         if (site.getCurrentUser() == null) {
             return null;
         }
         if (site.getCurrentUser().getCredentials()
-                .getAccountType().equals("premium")) {
+                .getAccountType().equals("premium")) { // verificam daca utilizatorul este premium
             Notification notification = new Notification();
             notification.setMessage("Recommendation");
+            // verificam daca utilizatorul a apreciat vreun film
             if (!site.getCurrentUser().getLikedMovies().isEmpty()) {
                 ArrayList<String> genres = new ArrayList<>();
                 for (int i = 0; i < site.getCurrentUser().getLikedMovies().size(); i++) {
@@ -835,39 +859,49 @@ public final class ActionVisitorImpl implements ActionVisitor {
                             .getLikedMovies().get(i).getGenres().size(); j++) {
                         if (!genres.contains(site.getCurrentUser()
                                 .getLikedMovies().get(i).getGenres().get(j))) {
+                            // retinem doar genurile apreciate de utilizator
                             genres.add(site.getCurrentUser().getLikedMovies()
                                     .get(i).getGenres().get(j));
                         }
                     }
                 }
 
+                // o structura care retine un gen si numarul de like-uri
                 ArrayList<LastRecomAux> vect = new ArrayList<>();
                 for (String genre : genres) {
+                    // initializam pentru fiecare gen cu 0
                     vect.add(new LastRecomAux(genre, 0));
                 }
                 for (int i = 0; i < genres.size(); i++) {
                     for (int j = 0; j < site.getCurrentUser().getLikedMovies().size(); j++) {
                         if (site.getCurrentUser().getLikedMovies().get(j)
                                 .getGenres().contains(genres.get(i))) {
+                            // crestem numarul de likeuri pentru genul curent
                             vect.get(i).setNoLikesForGenre(vect.get(i).getNoLikesForGenre() + 1);
                         }
                     }
                 }
+                // sortam vectorul dupa numarul de likeuri si mai apoi alfabetic
                 vect.sort(Comparator.comparing(LastRecomAux::getNoLikesForGenre)
                         .thenComparing(LastRecomAux::getGenre));
                 ArrayList<Movie> currMovies = new ArrayList<>();
                 for (int j = 0; j < site.getMoviesIn().size(); j++) {
                     if (!site.getMoviesIn().get(j).getCountriesBanned()
                             .contains(site.getCurrentUser().getCredentials().getCountry())) {
+                        // adaugam filmele in functie de cum sunt sortate genurile
                         currMovies.add(site.getMoviesIn().get(j));
                     }
                 }
+                // sortam filmele dupa numarul de likeuri pe fiecare film
                 currMovies.sort(Comparator.comparing(Movie::getNumLikes).reversed());
                 for (int i = 0; i < vect.size(); i++) {
                     for (Movie movie : currMovies) {
+                        // verificam filmele in functie de gen
                         if (movie.getGenres().contains(vect.get(i).getGenre())) {
+                            // verificam daca nu a mai urmarit filmul
                             if (!site.getCurrentUser().getWatchedMovies().contains(movie)) {
                                 notification.setMovieName(movie.getName());
+                                // trimitem o notificare in cazul in care am gasit vreun film
                                 site.getCurrentUser().getNotifications().add(notification);
                                 output.setCurrentUser(site.getCurrentUser());
                                 output.setError(null);
@@ -878,8 +912,10 @@ public final class ActionVisitorImpl implements ActionVisitor {
                     }
                 }
             } else {
+                // altfel trimitem notificarea ca nu are nicio recomandare
                 notification.setMovieName("No recommendation");
             }
+            // afisam output fara nicio recomandare extra
             site.getCurrentUser().getNotifications().add(notification);
             output.setCurrentUser(site.getCurrentUser());
             output.setError(null);
