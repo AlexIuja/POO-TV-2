@@ -17,7 +17,7 @@ public interface SubjectInterface {
     /**
      *
      * @param databaseAux structura in care retinem numele filmului
-     *                    si comanda care genereaza o notificare
+     *                     si comanda care genereaza o notificare
      */
     void notifyUpdate(DatabaseAux databaseAux);
 }
